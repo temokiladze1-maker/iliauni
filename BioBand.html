@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioBand - Bio-Adaptive Climate Control</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #00d4ff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.7;
+        }
+
+        .cta-btn {
+            background: linear-gradient(135deg, #00d4ff, #0099ff);
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: #000;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.3s;
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.1), transparent 70%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        h1 {
+            font-size: 72px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+        }
+
+        .hero p {
+            font-size: 22px;
+            color: #aaa;
+            margin-bottom: 50px;
+            line-height: 1.6;
+        }
+
+        /* Device Showcase */
+        .device-showcase {
+            padding: 120px 50px;
+            background: linear-gradient(180deg, #000, #0a0a0a);
+        }
+
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: center;
+        }
+
+        .device-image {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 40px;
+        }
+
+        .device-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+            display: block;
+        }
+        
+        .device-image img[src=""],
+        .device-image img:not([src]) {
+            display: none;
+        }
+
+        .device-info h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .device-info p {
+            font-size: 18px;
+            color: #aaa;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        /* System Flow */
+        .system-flow {
+            padding: 120px 50px;
+            background: #000;
+        }
+
+        .system-flow h2 {
+            text-align: center;
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 60px;
+        }
+
+        .flow-diagram {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid #222;
+        }
+
+        .flow-diagram img {
+            width: 100%;
+            border-radius: 10px;
+            display: block;
+        }
+
+        /* Analytics Section */
+        .analytics {
+            padding: 120px 50px;
+            background: linear-gradient(180deg, #000, #0a0a0a);
+        }
+
+        .analytics h2 {
+            text-align: center;
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 80px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .chart-card {
+            background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid #222;
+        }
+
+        .chart-card h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .pie-chart-container {
+            position: relative;
+            height: 350px;
+            max-width: 350px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 120px 50px;
+            background: #000;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 80px;
+            letter-spacing: -1px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid #222;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: #00d4ff;
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        /* Metrics Section */
+        .metrics {
+            padding: 120px 50px;
+            background: linear-gradient(180deg, #000, #0a0a0a);
+        }
+
+        .metrics-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .metrics h2 {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .metrics-subtitle {
+            font-size: 20px;
+            color: #aaa;
+            margin-bottom: 60px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .stat-card {
+            padding: 50px 30px;
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 64px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d4ff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 18px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Team Section */
+        .team {
+            padding: 120px 50px;
+            background: #000;
+        }
+
+        .team h2 {
+            text-align: center;
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 80px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .team-member {
+            text-align: center;
+        }
+
+        .team-avatar {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #00d4ff, #0099ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 700;
+        }
+
+        .team-name {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .team-role {
+            color: #aaa;
+            font-size: 16px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 50px;
+            background: #0a0a0a;
+            text-align: center;
+            border-top: 1px solid #222;
+        }
+
+        footer p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .footer-logo {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00d4ff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @media (max-width: 968px) {
+            h1 { font-size: 48px; }
+            .device-grid, .feature-grid, .stats-grid, .team-grid, .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">BioBand</div>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#analytics">Analytics</a></li>
+            <li><a href="#team">Team</a></li>
+        </ul>
+        <a href="#" class="cta-btn">Learn More</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1>Climate control that<br>understands your body</h1>
+            <p>BioBand is the world's first bio-adaptive climate control system. Using physiological data from your body, it automatically adjusts your environment for optimal comfort and efficiency.</p>
+            <a href="#" class="cta-btn">Explore the System</a>
+        </div>
+    </section>
+
+    <!-- Device Showcase -->
+    <section class="device-showcase">
+        <div class="device-grid">
+            <div class="device-image">
+                <img src="images/bracelet.png" alt="BioBand Bracelet">
+            </div>
+            <div class="device-info">
+                <h2>Smart Bracelet</h2>
+                <p>Wear comfort on your wrist. Our low-power bracelet continuously monitors your heart rate and skin temperature using medical-grade sensors.</p>
+                <p>Powered by ESP32-C3, it operates in deep-sleep cycles to maximize battery life while transmitting vital data via Bluetooth Low Energy.</p>
+            </div>
+        </div>
+
+        <div class="device-grid" style="margin-top: 100px;">
+            <div class="device-info">
+                <h2>Real-Time Monitoring</h2>
+                <p>The brain of your climate system. Our central hub aggregates data from your bracelet and ambient sensors to make intelligent decisions.</p>
+                <p>Using infrared signals, it communicates directly with your AC unit, adjusting temperature settings automatically for optimal comfort.</p>
+            </div>
+            <div class="device-image">
+                <img src="images/system.png" alt="Control Hub System">
+            </div>
+        </div>
+    </section>
+
+    <!-- System Flow -->
+    <section class="system-flow">
+        <h2>How It Works</h2>
+        <div class="flow-diagram">
+            <img src="images/flow.png" alt="System Flow Diagram">
+        </div>
+    </section>
+
+    <!-- Analytics Section -->
+    <section class="analytics" id="analytics">
+        <h2>Real-Time Analytics</h2>
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Temperature Trends</h3>
+                <div class="chart-container">
+                    <canvas id="tempChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>Heart Rate Monitoring</h3>
+                <div class="chart-container">
+                    <canvas id="hrChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>System Performance</h3>
+                <div class="pie-chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>Energy Savings</h3>
+                <div class="pie-chart-container">
+                    <canvas id="energyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <h2>Revolutionary Technology</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🫀</span>
+                <h3>Heart Rate Monitoring</h3>
+                <p>MAX30102 sensor captures precise heart rate data to understand your physiological state in real-time.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🌡️</span>
+                <h3>Temperature Sensing</h3>
+                <p>TMP117 high-precision sensor monitors skin temperature with ±0.1°C accuracy for optimal comfort.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">📡</span>
+                <h3>Wireless Connectivity</h3>
+                <p>Bluetooth Low Energy ensures seamless communication between devices with minimal power consumption.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <h3>Energy Efficient</h3>
+                <p>Deep-sleep cycles and smart wake patterns extend battery life while maintaining constant monitoring.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🤖</span>
+                <h3>Smart Automation</h3>
+                <p>Intelligent algorithms predict comfort needs and adjust AC settings proactively, not reactively.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">📊</span>
+                <h3>Real-Time Dashboard</h3>
+                <p>Monitor your body temperature, room conditions, and system performance through an intuitive interface.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Metrics -->
+    <section class="metrics">
+        <div class="metrics-container">
+            <h2>Built for Performance</h2>
+            <p class="metrics-subtitle">Engineering excellence in every component</p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">±0.1°C</div>
+                    <div class="stat-label">Temperature Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Continuous Monitoring</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">< 100ms</div>
+                    <div class="stat-label">Response Time</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section class="team" id="team">
+        <h2>Meet the Team</h2>
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="team-avatar">TK</div>
+                <div class="team-name">Temo Kiladze</div>
+                <div class="team-role">Lead Engineer</div>
+            </div>
+            <div class="team-member">
+                <div class="team-avatar">GB</div>
+                <div class="team-name">Goga Badrishvili</div>
+                <div class="team-role">Hardware Specialist</div>
+            </div>
+            <div class="team-member">
+                <div class="team-avatar">LK</div>
+                <div class="team-name">Luka Kavtaradze</div>
+                <div class="team-role">Software Developer</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">BioBand</div>
+        <p>Computer Engineering Undergraduate Program - Ilia State University</p>
+        <p>Supervised by Prof. Paata Gogishvili & Prof. George Modebadze</p>
+        <p style="margin-top: 20px;">© 2025 BioBand Team. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Temperature Trend Chart
+        const tempCtx = document.getElementById('tempChart').getContext('2d');
+        new Chart(tempCtx, {
+            type: 'line',
+            data: {
+                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+                datasets: [{
+                    label: 'Body Temperature (°C)',
+                    data: [36.3, 36.2, 36.5, 36.8, 37.1, 36.9, 36.5],
+                    borderColor: '#00d4ff',
+                    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Room Temperature (°C)',
+                    data: [22, 21, 23, 25, 26, 24, 22],
+                    borderColor: '#ff6b6b',
+                    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#aaa' }
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: { color: '#222' },
+                        ticks: { color: '#aaa' }
+                    },
+                    x: {
+                        grid: { color: '#222' },
+                        ticks: { color: '#aaa' }
+                    }
+                }
+            }
+        });
+
+        // Heart Rate Chart
+        const hrCtx = document.getElementById('hrChart').getContext('2d');
+        new Chart(hrCtx, {
+            type: 'line',
+            data: {
+                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+                datasets: [{
+                    label: 'Heart Rate (BPM)',
+                    data: [65, 62, 70, 85, 90, 75, 68],
+                    borderColor: '#ff6b6b',
+                    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#aaa' }
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: { color: '#222' },
+                        ticks: { color: '#aaa' }
+                    },
+                    x: {
+                        grid: { color: '#222' },
+                        ticks: { color: '#aaa' }
+                    }
+                }
+            }
+        });
+
+        // Performance Pie Chart
+        const perfCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(perfCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Optimal', 'Good', 'Adjusting'],
+                datasets: [{
+                    data: [75, 20, 5],
+                    backgroundColor: ['#00d4ff', '#0099ff', '#006699'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#aaa', padding: 20 }
+                    }
+                }
+            }
+        });
+
+        // Energy Savings Pie Chart
+        const energyCtx = document.getElementById('energyChart').getContext('2d');
+        new Chart(energyCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Saved', 'Used'],
+                datasets: [{
+                    data: [35, 65],
+                    backgroundColor: ['#00d4ff', '#333'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#aaa', padding: 20 }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
